@@ -86,6 +86,24 @@ class Multiplier (Node):
                                 [-self.TRI_LENGTH / 2,  -self.TRI_HEIGHT / 2],
                                 [ self.TRI_LENGTH / 2,   0]]
 
+    def __getTriangleCoordinates (self):
+        tri = self.triangle
+
+        # Reverse the triangle if coming from right or bottom
+        # (negate the x coordinates)
+        if ((self.direction == 'r') or (self.direction == 't')):
+            tri = [[-x[0], x[1]] for x in tri]
+
+        # Swap the x and y coordinates if the multiplier is vertical
+        if ((self.direction == 'b') or (self.direction == 't')):
+            tri = [[x[1], x[0]] for x in tri]
+
+        # Return the string with the coordinates
+        coordinateString = ''
+        for pair in self.triangle:
+            coordinateString += '({},{})'.format (pair[0], pair[1])
+        return coordinateString
+
     def getTexString (self):
         texString = ''
 
@@ -93,6 +111,7 @@ class Multiplier (Node):
         texString += super (Multiplier, self).addArrows ([self.TRI_LENGTH * 0.5 * x for x in [-1, -1, 1, 1]], self.direction)
 
         # Draw the triangle
+        texString += '\\pspolygon[fillstyle=solid,fillcolor=white]{}\n'.format (self.__getTriangleCoordinates ())
 
         # Set the lengths according to the orientation
 
