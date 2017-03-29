@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import sys
 from lxml import objectify
 
@@ -198,8 +199,9 @@ if __name__ == "__main__":
         sys.exit (-1)
 
     # Get XML file
+    xmlFileName = sys.argv[1]
     try:
-        with open (sys.argv[1], 'r') as xmlFile:
+        with open (xmlFileName, 'r') as xmlFile:
             xmlString = xmlFile.read ().replace ('\n', '')
     except NameError:
         print "Unable to read the XML file."
@@ -207,4 +209,5 @@ if __name__ == "__main__":
     xmlStruct = objectify.fromstring (xmlString)
 
     # Generate tex file
-    createTexFile ("tempName.tex", xmlStruct)
+    texFileName = os.path.splitext (xmlFileName)[0] + '.tex'
+    createTexFile (texFileName, xmlStruct)
