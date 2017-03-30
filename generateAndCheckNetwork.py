@@ -81,7 +81,7 @@ class Multiplier (Node):
         self.TRI_HEIGHT     = 0.5
         self.TRI_LENGTH     = 0.6
         self.TEXT_HEIGHT    = 0.45
-        self.direction      = nodeStruct.direction
+        self.direction      = str (nodeStruct.direction).strip ()
         self.coefficient    = nodeStruct.coefficient
         self.triangle       = [ [-self.TRI_LENGTH / 2,   self.TRI_HEIGHT / 2],
                                 [-self.TRI_LENGTH / 2,  -self.TRI_HEIGHT / 2],
@@ -101,8 +101,9 @@ class Multiplier (Node):
 
         # Return the string with the coordinates
         coordinateString = ''
-        for pair in self.triangle:
-            coordinateString += '({},{})'.format (pair[0], pair[1])
+        for pair in tri:
+            coordinateString += '({},{})'.format (pair[0] + self.position[0],
+                                                  pair[1] + self.position[1])
         return coordinateString
 
     def getTexString (self):
@@ -191,6 +192,42 @@ def createTexFile (fileName, xmlStruct):
         texFile.write ('\\end{pspicture}}\n')
 
 
+def createWrapperTexFile (texFileName):
+    wrapperFileName = 'wrapper_' + texFileName
+    texContents = """\
+\documentclass[fleqn,12pt]{article}
+\usepackage[rmargin=1in,lmargin=1in,tmargin=0.7in,bmargin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{chngpage}
+\usepackage{multirow}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+\usepackage{hyperref}
+\usepackage{comment}
+\usepackage{rotating}
+\usepackage{color}
+\usepackage{array}
+\usepackage{colortbl}
+\usepackage{pst-all}
+\usepackage{epstopdf}
+\usepackage{auto-pst-pdf}
+\\begin{document}
+    \\begin{figure}[!ht]
+        \centerline{
+            \input{"""
+    texContents += texFileName
+    texContents += """}
+        }
+    \end{figure}
+\end{document}
+"""
+    with open (wrapperFileName, 'w') as wrapperFile:
+        wrapperFile.write (texContents)
+
+
 if __name__ == "__main__":
 
     # Check that have at least one argument
@@ -211,3 +248,6 @@ if __name__ == "__main__":
     # Generate tex file
     texFileName = os.path.splitext (xmlFileName)[0] + '.tex'
     createTexFile (texFileName, xmlStruct)
+
+    # Generate the wrapper tex file
+    createWrapperTexFile (texFileName)
