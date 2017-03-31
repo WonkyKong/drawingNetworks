@@ -75,6 +75,44 @@ class Node (object):
         return ''
 
 
+class Delay (Node):
+
+    def __init__ (self, nodeStruct, grid):
+        Node.__init__ (self, nodeStruct, grid)
+        self.HEIGHT             = 0.6
+        self.WIDTH              = 0.8
+        self.SUPERCRIPT_NUDGE   = 0.08
+        self.arrows              = str (nodeStruct.arrows).strip ()
+
+    def getTexString (self):
+        texString = ''
+
+        # Draw the arrows
+        shapeLimits = [x * 0.5 for x in [-self.WIDTH, -self.HEIGHT, self.WIDTH, self.HEIGHT]]
+        texString += super (Delay, self).addArrows (shapeLimits, self.arrows)
+
+        # Draw the box
+        texString += '\\psframe[{}]({},{})({},{})\n'.format (
+            'fillstyle=solid,fillcolor=white',
+            self.position[0] - self.WIDTH  * 0.5,
+            self.position[1] - self.HEIGHT * 0.5,
+            self.position[0] + self.WIDTH  * 0.5,
+            self.position[1] + self.HEIGHT * 0.5,
+        )
+
+        # Add the text inside the box
+        texString += '\\rput({},{}){{\\fontsize{{8}}{{8}}\\selectfont$z\\ \\,\\,$}}'.format (
+            self.position[0],
+            self.position[1]
+        )
+        texString += '\\rput({},{}){{\\ \\ \\fontsize{{6}}{{6}}\\selectfont-1}}'.format (
+            self.position[0],
+            self.position[1] + self.SUPERCRIPT_NUDGE
+        )
+
+        return texString
+
+
 class Adder (Node):
 
     def __init__ (self, nodeStruct, grid):
@@ -83,7 +121,6 @@ class Adder (Node):
         self.RADIUS     = 0.2
         self.arrows     = str (nodeStruct.arrows).strip ()
 
-
     def getTexString (self):
         texString = ''
 
@@ -91,20 +128,26 @@ class Adder (Node):
         texString += super (Adder, self).addArrows ([self.RADIUS * x for x in [-1, -1, 1, 1]], self.arrows)
 
         # Draw the circle
-        texString += '\\pscircle[{}]({},{}){{{}}}\n'.format ('fillstyle=solid,fillcolor=white',
-                                                           self.position[0],
-                                                           self.position[1],
-                                                           self.RADIUS)
+        texString += '\\pscircle[{}]({},{}){{{}}}\n'.format (
+            'fillstyle=solid,fillcolor=white',
+            self.position[0],
+            self.position[1],
+            self.RADIUS
+        )
+
         # Draw the cross
-        texString += '\\psline({},{})({},{})\n'.format (self.position[0]-self.ARM_LENGTH,
-                                                        self.position[1],
-                                                        self.position[0]+self.ARM_LENGTH,
-                                                        self.position[1])
-        
-        texString += '\\psline({},{})({},{})\n'.format (self.position[0],
-                                                        self.position[1]-self.ARM_LENGTH,
-                                                        self.position[0],
-                                                        self.position[1]+self.ARM_LENGTH)
+        texString += '\\psline({},{})({},{})\n'.format (
+            self.position[0]-self.ARM_LENGTH,
+            self.position[1],
+            self.position[0]+self.ARM_LENGTH,
+            self.position[1]
+        )
+        texString += '\\psline({},{})({},{})\n'.format (
+            self.position[0],
+            self.position[1]-self.ARM_LENGTH,
+            self.position[0],
+            self.position[1]+self.ARM_LENGTH
+        )
 
         return texString
 
@@ -170,6 +213,7 @@ def NodeFactory (nodeStruct, grid):
     type = str (nodeStruct.type).strip ()
     if type == 'multiplier':    return Multiplier   (nodeStruct, grid)
     if type == 'adder':         return Adder        (nodeStruct, grid)
+    if type == 'delay':         return Delay        (nodeStruct, grid)
     return Node (nodeStruct, grid)
 
 
