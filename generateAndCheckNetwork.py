@@ -75,6 +75,42 @@ class Node (object):
         return ''
 
 
+class Arrow (Node):
+
+    def __init__ (self, nodeStruct, grid):
+        Node.__init__ (self, nodeStruct, grid)
+        self.TEXT_DISTANCE  = 0.3
+        self.arrows         = str (nodeStruct.arrows).strip ()
+
+        find = objectify.ObjectPath ("node.text")
+        try:
+            self.text = find (nodeStruct).text.strip ()
+        except:
+            self.text = ''
+
+        find = objectify.ObjectPath ("node.text_justification")
+        try:
+            self.text_justification = '[' + find (nodeStruct).text.strip () + ']'
+        except:
+            self.text_justification = ''
+
+    def getTexString (self):
+        texString = ''
+
+        # Draw the arrows
+        texString += super (Arrow, self).addArrows ([0, 0, 0, 0], self.arrows)
+
+        # Add the text
+        if self.text:
+            texString += '\\rput{}({},{}){{\\fontsize{{8}}{{8}}\\selectfont ${}$}}\n'.format (
+                self.text_justification,
+                self.position[0],
+                self.position[1] + self.TEXT_DISTANCE,
+                self.text
+            )
+
+        return texString
+
 class Delay (Node):
 
     def __init__ (self, nodeStruct, grid):
@@ -214,6 +250,7 @@ def NodeFactory (nodeStruct, grid):
     if type == 'multiplier':    return Multiplier   (nodeStruct, grid)
     if type == 'adder':         return Adder        (nodeStruct, grid)
     if type == 'delay':         return Delay        (nodeStruct, grid)
+    if type == 'arrow':         return Arrow        (nodeStruct, grid)
     return Node (nodeStruct, grid)
 
 
