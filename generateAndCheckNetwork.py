@@ -5,6 +5,9 @@ import sys
 from lxml import objectify
 
 
+# Use this...?:
+#https://docs.python.org/3/library/xml.etree.elementtree.html
+
 class Grid:
 
     def __init__ (self, gridStruct):
@@ -142,16 +145,21 @@ class Line:
     def __init__ (self, lineStruct, grid):
         self.startPosition  = grid.to_xy (str (lineStruct.start).strip ())
         self.endPosition    = grid.to_xy (str (lineStruct.stop).strip ())
+        find = objectify.ObjectPath ("line.line_style")
         try:
-            self.lineStyle = '[linewidth={}]'.format (lineStruct.line_width.strip ())
-        except AttributeError:
+            self.lineStyle = '[{}]'.format (find (lineStruct).text.strip ())
+        except:
+            find = objectify.ObjectPath ("line.line_width")
             try:
-                self.lineStyle = '[{}]'.format (lineStruct.line_style.strip ())
-            except AttributeError:
+                self.lineStyle = '[linewidth={}]'.format (find (lineStruct).strip ())
+            except:
                 self.lineStyle = ''
-        if (hasattr (lineStruct, 'square_ends')):
+
+        find = objectify.ObjectPath ("line.square_ends")
+        try:
+            square_ends = find (lineStruct).tag
             self.lineEnds = ''
-        else:
+        except:
             self.lineEnds = '{c-c}'
 
     def getTexString (self):
