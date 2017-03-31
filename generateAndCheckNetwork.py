@@ -6,9 +6,6 @@ from lxml import objectify
 from subprocess import call
 
 
-# Use this...?:
-#https://docs.python.org/3/library/xml.etree.elementtree.html
-
 class Grid:
 
     def __init__ (self, gridStruct):
