@@ -3,6 +3,7 @@
 import os
 import sys
 from lxml import objectify
+from subprocess import call
 
 
 # Use this...?:
@@ -263,8 +264,15 @@ if __name__ == "__main__":
     xmlStruct = objectify.fromstring (xmlString)
 
     # Generate tex file
-    texFileName = os.path.splitext (xmlFileName)[0] + '.tex'
+    fileNameStem = os.path.splitext (xmlFileName)[0]
+    texFileName = fileNameStem + '.tex'
     createTexFile (texFileName, xmlStruct)
 
     # Generate the wrapper tex file
     createWrapperTexFile (texFileName)
+
+    # Generate the pdf
+    wrapperStem = 'wrapper_{}'.format (fileNameStem)
+    call (['/Library/TeX/texbin/latex', wrapperStem + '.tex'])
+    call (['/Library/TeX/texbin/dvips', '-Ppdf', '-t', 'a$', wrapperStem, '-o'])
+    call (['ps2pdf', wrapperStem + '.ps', wrapperStem + '.pdf'])
