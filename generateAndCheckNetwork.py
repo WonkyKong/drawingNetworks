@@ -82,7 +82,7 @@ class Multiplier (Node):
         self.TRI_LENGTH     = 0.6
         self.TEXT_HEIGHT    = 0.45
         self.direction      = str (nodeStruct.direction).strip ()
-        self.coefficient    = nodeStruct.coefficient
+        self.coefficient    = str (nodeStruct.coefficient).strip ()
         self.triangle       = [ [-self.TRI_LENGTH / 2,   self.TRI_HEIGHT / 2],
                                 [-self.TRI_LENGTH / 2,  -self.TRI_HEIGHT / 2],
                                 [ self.TRI_LENGTH / 2,   0]]
@@ -116,8 +116,17 @@ class Multiplier (Node):
         texString += '\\pspolygon[fillstyle=solid,fillcolor=white]{}\n'.format (self.__getTriangleCoordinates ())
 
         # Set the lengths according to the orientation
+        if ((self.direction == 'b') or (self.direction == 't')):
+            h1 = self.TEXT_HEIGHT
+            v1 = 0
+        else:
+            h1 = 0
+            v1 = self.TEXT_HEIGHT
 
         # Add the coefficient
+        texString += '\\rput({},{}){{\\fontsize{{8}}{{8}}\\selectfont ${}$}}\n'.format (self.position[0]+h1,
+                                                                                  self.position[1]+v1,
+                                                                                  self.coefficient)
 
         return texString
 
