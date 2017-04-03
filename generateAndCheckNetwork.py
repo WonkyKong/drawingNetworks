@@ -6,11 +6,41 @@ from lxml import objectify
 from subprocess import call
 
 
-class Grid:
+class AttributeFinder:
+
+    def __init__ (self, xmlStruct, xmlTag):
+        self.xmlStruct  = xmlStruct
+        self.xmlTag     = xmlTag
+
+    def getAttribute (self, attributeName, func):
+        find = objectify.ObjectPath ('{}.{}'.format (self.xmlTag, attributeName))
+        try:
+            attributeString = find (self.xmlStruct).text.strip ()
+            if (type (func) is str):
+                return func.format (attributeString)
+            else:
+                return func (attributeString)
+        except:
+            return None
+
+
+    def isPresent (self, attributeName, trueValue, falseValue):
+        find = objectify.ObjectPath ('{}.{}'.format (self.xmlTag, attributeName))
+        try:
+            isTrue = find (xmlStruct)
+            return trueValue
+        except:
+            return falseValue
+
+
+class Grid (AttributeFinder):
 
     def __init__ (self, gridStruct):
-        self.x = str (gridStruct.x).split (',')
-        self.y = str (gridStruct.y).split (',')
+        AttributeFinder.__init__ (self, gridStruct, 'grid')
+        def splitValues (s):
+            return s.split (',')
+        self.x = self.getAttribute ('x', splitValues)
+        self.y = self.getAttribute ('y', splitValues)
 
     def to_xy (self, indicesStr):
         indices = str (indicesStr).split (',')
@@ -23,10 +53,11 @@ class Grid:
                 float (self.y[int (indices[1]) - 1])]
 
 
-class Node (object):
+class Node (object, AttributeFinder):
 
     def __init__ (self, nodeStruct, grid):
-        self.position = grid.to_xy_array (nodeStruct.position)
+        AttributeFinder.__init__ (self, nodeStruct, 'node')
+        self.position = self.getAttribute ('position', grid.to_xy_array)
         self.ARROW_LENGTH   = 0.09
         self.ARROW_NUDGE    = 0.02
 
@@ -80,18 +111,14 @@ class Arrow (Node):
     def __init__ (self, nodeStruct, grid):
         Node.__init__ (self, nodeStruct, grid)
         self.TEXT_DISTANCE  = 0.3
-        self.arrows         = str (nodeStruct.arrows).strip ()
+        self.arrows         = self.getAttribute ('arrows',  '{}')
 
-        find = objectify.ObjectPath ("node.text")
-        try:
-            self.text = find (nodeStruct).text.strip ()
-        except:
+        self.text           = self.getAttribute ('text',    '{}')
+        if (self.text == None):
             self.text = ''
 
-        find = objectify.ObjectPath ("node.text_justification")
-        try:
-            self.text_justification = '[' + find (nodeStruct).text.strip () + ']'
-        except:
+        self.text_justification = self.getAttribute ('text_justification', '[{}]')
+        if (self.text_justification == None):
             self.text_justification = ''
 
     def getTexString (self):
@@ -118,7 +145,7 @@ class Delay (Node):
         self.HEIGHT             = 0.6
         self.WIDTH              = 0.8
         self.SUPERCRIPT_NUDGE   = 0.08
-        self.arrows              = str (nodeStruct.arrows).strip ()
+        self.arrows             = self.getAttribute ('arrows', '{}')
 
     def getTexString (self):
         texString = ''
@@ -155,7 +182,7 @@ class Adder (Node):
         Node.__init__ (self, nodeStruct, grid)
         self.ARM_LENGTH = 0.09
         self.RADIUS     = 0.2
-        self.arrows     = str (nodeStruct.arrows).strip ()
+        self.arrows     = self.getAttribute ('arrows', '{}')
 
     def getTexString (self):
         texString = ''
@@ -195,8 +222,8 @@ class Multiplier (Node):
         self.TRI_HEIGHT     = 0.5
         self.TRI_LENGTH     = 0.6
         self.TEXT_HEIGHT    = 0.45
-        self.direction      = str (nodeStruct.direction).strip ()
-        self.coefficient    = str (nodeStruct.coefficient).strip ()
+        self.direction      = self.getAttribute ('direction',   '{}')
+        self.coefficient    = self.getAttribute ('coefficient', '{}')
         self.triangle       = [ [-self.TRI_LENGTH / 2,   self.TRI_HEIGHT / 2],
                                 [-self.TRI_LENGTH / 2,  -self.TRI_HEIGHT / 2],
                                 [ self.TRI_LENGTH / 2,   0]]
@@ -254,33 +281,28 @@ def NodeFactory (nodeStruct, grid):
     return Node (nodeStruct, grid)
 
 
-class Line:
+class Line (AttributeFinder):
 
     def __init__ (self, lineStruct, grid):
-        self.startPosition  = grid.to_xy (str (lineStruct.start).strip ())
-        self.endPosition    = grid.to_xy (str (lineStruct.stop).strip ())
-        find = objectify.ObjectPath ("line.line_style")
-        try:
-            self.lineStyle = '[{}]'.format (find (lineStruct).text.strip ())
-        except:
-            find = objectify.ObjectPath ("line.line_width")
-            try:
-                self.lineStyle = '[linewidth={}]'.format (find (lineStruct).strip ())
-            except:
-                self.lineStyle = ''
+        AttributeFinder.__init__ (self, lineStruct, 'line')
+        self.startPosition  = self.getAttribute ('start',        grid.to_xy)
+        self.endPosition    = self.getAttribute ('stop',         grid.to_xy)
 
-        find = objectify.ObjectPath ("line.square_ends")
-        try:
-            square_ends = find (lineStruct).tag
-            self.lineEnds = ''
-        except:
-            self.lineEnds = '{c-c}'
+        self.lineStyle      = self.getAttribute ('line_style',   '[{}]')
+        if self.lineStyle == None:
+            self.lineStyle  = self.getAttribute ('line_width',   '[linewidth={}]')
+        if self.lineStyle == None:
+            self.lineStyle = ''
+
+        self.lineEnds       = self.isPresent ('square_ends', '', '{c-c}')
 
     def getTexString (self):
-        return '\\psline{}{}({})({})\n'.format (self.lineStyle,
-                                                  self.lineEnds,
-                                                  self.startPosition,
-                                                  self.endPosition)
+        return '\\psline{}{}({})({})\n'.format (
+            self.lineStyle,
+            self.lineEnds,
+            self.startPosition,
+            self.endPosition
+        )
 
 
 
