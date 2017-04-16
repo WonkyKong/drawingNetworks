@@ -15,218 +15,59 @@
     </grid>
     <lines>
         <!-- __________ Horizontal lines __________ -->
-        <line>
-            <start>     1,1     </start>
-            <stop>      7,1     </stop>
-        </line>
-        <line>
-            <start>     2,3     </start>
-            <stop>      6,3     </stop>
-        </line>
-        <line>
-            <start>     2,5     </start>
-            <stop>      6,5     </stop>
-        </line>
-        <line>
-            <start>     2,6     </start>
-            <stop>      6,6     </stop>
-        </line>
-        <line>
-            <start>     2,8     </start>
-            <stop>      6,8     </stop>
-        </line>
+        <line start="1,1" stop="7,1" />
+        <line start="2,3" stop="6,3" />
+        <line start="2,5" stop="6,5" />
+        <line start="2,6" stop="6,6" />
+        <line start="2,8" stop="6,8" />
+
         <!-- __________ Vertical lines __________ -->
-        <line>
-            <start>     2,1     </start>
-            <stop>      2,9     </stop>
-        </line>
-        <line>
-            <start>     4,1     </start>
-            <stop>      4,9     </stop>
-        </line>
-        <line>
-            <start>     6,1     </start>
-            <stop>      6,9     </stop>
-        </line>
-        <!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
-        <line>
-            <start>     2,9     </start>
-            <stop>      2,10     </stop>
-            <line_style>
-                linestyle=dashed,dash=3pt 4pt
-            </line_style>
-        </line>
-        <line>
-            <start>     4,9     </start>
-            <stop>      4,10     </stop>
-            <line_style>
-                linestyle=dashed,dash=3pt 4pt
-            </line_style>
-        </line>
-        <line>
-            <start>     6,9     </start>
-            <stop>      6,10     </stop>
-            <line_style>
-                linestyle=dashed,dash=3pt 4pt
-            </line_style>
-        </line>
-        <!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
-        <line>
-            <start>     2,10    </start>
-            <stop>      2,8     </stop>
-        </line>
-        <line>
-            <start>     4,10    </start>
-            <stop>      4,8     </stop>
-        </line>
-        <line>
-            <start>     6,10    </start>
-            <stop>      6,8     </stop>
-        </line>
+        <line start="2,1" stop="2,9" />
+        <line start="4,1" stop="4,9" />
+        <line start="6,1" stop="6,9" />
+
+        <line start="2,9" stop="2,10" line_style="linestyle=dashed,dash=3pt 4pt"/>
+        <line start="4,9" stop="4,10" line_style="linestyle=dashed,dash=3pt 4pt"/>
+        <line start="6,9" stop="6,10" line_style="linestyle=dashed,dash=3pt 4pt"/>
+
+        <line start="2,10" stop="2,8" />
+        <line start="4,10" stop="4,8" />
+        <line start="6,10" stop="6,8" />
     </lines>
     <nodes>
         <!-- __________Multipliers__________ -->
-        <node>
-            <type>          multiplier  </type>
-            <position>      3,1         </position>
-            <direction>     l           </direction>
-            <coefficient>   b_0         </coefficient>
-        </node>
-        <node>
-            <type>          multiplier  </type>
-            <position>      3,3         </position>
-            <direction>     l           </direction>
-            <coefficient>   b_1        </coefficient>
-        </node>
-        <node>
-            <type>          multiplier  </type>
-            <position>      3,5         </position>
-            <direction>     l           </direction>
-            <coefficient>   b_2        </coefficient>
-        </node>
-        <node>
-            <type>          multiplier  </type>
-            <position>      3,6         </position>
-            <direction>     l           </direction>
-            <coefficient>   b_{K-1}     </coefficient>
-        </node>
-        <node>
-            <type>          multiplier  </type>
-            <position>      3,8         </position>
-            <direction>     l           </direction>
-            <coefficient>   b_K         </coefficient>
-        </node>
-        <node>
-            <type>          multiplier  </type>
-            <position>      5,3         </position>
-            <direction>     r           </direction>
-            <coefficient>   -a_1        </coefficient>
-        </node>
-        <node>
-            <type>          multiplier  </type>
-            <position>      5,5         </position>
-            <direction>     r           </direction>
-            <coefficient>   -a_2        </coefficient>
-        </node>
-        <node>
-            <type>          multiplier  </type>
-            <position>      5,6         </position>
-            <direction>     r           </direction>
-            <coefficient>   -a_{K-1}    </coefficient>
-        </node>
-        <node>
-            <type>          multiplier  </type>
-            <position>      5,8         </position>
-            <direction>     r           </direction>
-            <coefficient>   -a_K        </coefficient>
-        </node>
+        <node type="multiplier" position="3,1" direction="l" coefficient="b_0"/>
+        <node type="multiplier" position="3,3" direction="l" coefficient="b_1"/>
+        <node type="multiplier" position="3,5" direction="l" coefficient="b_2"/>
+        <node type="multiplier" position="3,6" direction="l" coefficient="b_{K-1}"/>
+        <node type="multiplier" position="3,8" direction="l" coefficient="b_K"/>
+
+        <node type="multiplier" position="5,3" direction="r" coefficient="-a_1"/>
+        <node type="multiplier" position="5,5" direction="r" coefficient="-a_2"/>
+        <node type="multiplier" position="5,6" direction="r" coefficient="-a_{K-1}"/>
+        <node type="multiplier" position="5,8" direction="r" coefficient="-a_K"/>
+
         <!-- __________Adders__________ -->
-        <node>
-            <type>          adder       </type>
-            <position>      4,1         </position>
-            <arrows>        lb          </arrows>
-        </node>
-        <node>
-            <type>          adder       </type>
-            <position>      4,3         </position>
-            <arrows>        lrb         </arrows>
-        </node>
-        <node>
-            <type>          adder       </type>
-            <position>      4,5         </position>
-            <arrows>        lrb         </arrows>
-        </node>
-        <node>
-            <type>          adder       </type>
-            <position>      4,6         </position>
-            <arrows>        lrb         </arrows>
-        </node>
-        <node>
-            <type>          adder       </type>
-            <position>      4,8         </position>
-            <arrows>        lr          </arrows>
-        </node>
+        <node type="adder" position="4,1" arrows="lb"/>
+        <node type="adder" position="4,3" arrows="lrb"/>
+        <node type="adder" position="4,5" arrows="lrb"/>
+        <node type="adder" position="4,6" arrows="lrb"/>
+        <node type="adder" position="4,8" arrows="lr"/>
+
         <!-- __________Delays__________ -->
-        <node>
-            <type>          delay       </type>
-            <position>      2,2         </position>
-            <arrows>        t           </arrows>
-        </node>
-        <node>
-            <type>          delay       </type>
-            <position>      2,4         </position>
-            <arrows>        t           </arrows>
-        </node>
-        <node>
-            <type>          delay       </type>
-            <position>      2,7         </position>
-            <arrows>        t           </arrows>
-        </node>
-        <node>
-            <type>          delay       </type>
-            <position>      6,2         </position>
-            <arrows>        t           </arrows>
-        </node>
-        <node>
-            <type>          delay       </type>
-            <position>      6,4         </position>
-            <arrows>        t           </arrows>
-        </node>
-        <node>
-            <type>          delay       </type>
-            <position>      6,7         </position>
-            <arrows>        t           </arrows>
-        </node>
+        <node type="delay" position="2,2" arrows="t"/>
+        <node type="delay" position="2,4" arrows="t"/>
+        <node type="delay" position="2,7" arrows="t"/>
+
+        <node type="delay" position="6,2" arrows="t"/>
+        <node type="delay" position="6,4" arrows="t"/>
+        <node type="delay" position="6,7" arrows="t"/>
+
         <!-- __________ Arrows __________ -->
-        <node>
-            <type>          arrow       </type>
-            <position>      7,1         </position>
-            <arrows>        l           </arrows>
-            <text>          y[n]        </text>
-        </node>
-        <node>
-            <type>          arrow       </type>
-            <position>      1,1         </position>
-            <arrows>                    </arrows>
-            <text>          x[n]        </text>
-        </node>
-        <node>
-            <type>          arrow       </type>
-            <position>      2,9         </position>
-            <arrows>        t           </arrows>
-            <text>                      </text>
-        </node>
-        <node>
-            <type>          arrow       </type>
-            <position>      6,9         </position>
-            <arrows>        t           </arrows>
-            <text>                      </text>
-        </node>
-        <node>
-            <type>          arrow       </type>
-            <position>      4,10        </position>
-            <arrows>        b           </arrows>
-            <text>                      </text>
-        </node>
+        <node type="arrow" position="7,1"  arrows="l" text="y[n]"/>
+        <node type="arrow" position="1,1"  arrows=""  text="x[n]"/>
+        <node type="arrow" position="2,9"  arrows="t" text=""/>
+        <node type="arrow" position="6,9"  arrows="t" text=""/>
+        <node type="arrow" position="4,10" arrows="b" text=""/>
     </nodes>
 </figure>

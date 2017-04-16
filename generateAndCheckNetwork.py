@@ -12,17 +12,24 @@ class AttributeFinder:
         self.xmlStruct  = xmlStruct
         self.xmlTag     = xmlTag
 
-    def getAttribute (self, attributeName, func):
-        find = objectify.ObjectPath ('{}.{}'.format (self.xmlTag, attributeName))
-        try:
-            attributeString = find (self.xmlStruct).text.strip ()
-            if (type (func) is str):
-                return func.format (attributeString)
-            else:
-                return func (attributeString)
-        except:
-            return None
+    @staticmethod
+    def _applyFunc (attributeString, func):
+        if (type (func) is str):
+            return func.format (attributeString)
+        else:
+            return func (attributeString)
 
+    def getAttribute (self, attributeName, func):
+        attributeString = self.xmlStruct.get (attributeName)
+        if attributeString is not None:
+            return AttributeFinder._applyFunc (attributeString, func)
+        else:
+            find = objectify.ObjectPath ('{}.{}'.format (self.xmlTag, attributeName))
+            try:
+                attributeString = find (self.xmlStruct).text.strip ()
+                return AttributeFinder._applyFunc (attributeString, func)
+            except:
+                return None
 
     def isPresent (self, attributeName, trueValue, falseValue):
         find = objectify.ObjectPath ('{}.{}'.format (self.xmlTag, attributeName))
@@ -273,7 +280,13 @@ class Multiplier (Node):
 
 
 def NodeFactory (nodeStruct, grid):
-    type = str (nodeStruct.type).strip ()
+
+    # Try getting the type from an attribute
+    type = nodeStruct.get ("type")
+    if type is None:
+        # Get the type from a sub-node
+        type = str (nodeStruct.type).strip ()
+
     if type == 'multiplier':    return Multiplier   (nodeStruct, grid)
     if type == 'adder':         return Adder        (nodeStruct, grid)
     if type == 'delay':         return Delay        (nodeStruct, grid)
