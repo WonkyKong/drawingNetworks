@@ -13,7 +13,7 @@ class AttributeFinder:
         self.xmlTag     = xmlTag
 
     @staticmethod
-    def _applyFunc (attributeString, func):
+    def __applyFunc (attributeString, func):
         if (type (func) is str):
             return func.format (attributeString)
         else:
@@ -22,12 +22,12 @@ class AttributeFinder:
     def getAttribute (self, attributeName, func):
         attributeString = self.xmlStruct.get (attributeName)
         if attributeString is not None:
-            return AttributeFinder._applyFunc (attributeString, func)
+            return AttributeFinder.__applyFunc (attributeString, func)
         else:
             find = objectify.ObjectPath ('{}.{}'.format (self.xmlTag, attributeName))
             try:
                 attributeString = find (self.xmlStruct).text.strip ()
-                return AttributeFinder._applyFunc (attributeString, func)
+                return AttributeFinder.__applyFunc (attributeString, func)
             except:
                 return None
 
@@ -281,11 +281,13 @@ class Multiplier (Node):
 
 def NodeFactory (nodeStruct, grid):
 
-    # Try getting the type from an attribute
-    type = nodeStruct.get ("type")
-    if type is None:
-        # Get the type from a sub-node
-        type = str (nodeStruct.type).strip ()
+    type = nodeStruct.tag
+    if type == "node":
+        # Try getting the type from an attribute
+        type = nodeStruct.get ("type")
+        if type is None:
+            # Get the type from a sub-node
+            type = str (nodeStruct.type).strip ()
 
     if type == 'multiplier':    return Multiplier   (nodeStruct, grid)
     if type == 'adder':         return Adder        (nodeStruct, grid)
@@ -340,8 +342,9 @@ def createTexFile (fileName, xmlStruct):
 
     # Populate the nodes
     nodes = []
-    for xmlNode in xmlStruct.nodes.node:
-        nodes.append (NodeFactory (xmlNode, grid))
+    for xmlNode in xmlStruct.nodes.getchildren ():
+        if xmlNode.tag != "comment":
+            nodes.append (NodeFactory (xmlNode, grid))
 
     # Write to the tex file
     with open (fileName, 'w') as texFile:

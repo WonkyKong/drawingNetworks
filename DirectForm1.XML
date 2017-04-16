@@ -36,38 +36,38 @@
     </lines>
     <nodes>
         <!-- __________Multipliers__________ -->
-        <node type="multiplier" position="3,1" direction="l" coefficient="b_0"/>
-        <node type="multiplier" position="3,3" direction="l" coefficient="b_1"/>
-        <node type="multiplier" position="3,5" direction="l" coefficient="b_2"/>
-        <node type="multiplier" position="3,6" direction="l" coefficient="b_{K-1}"/>
-        <node type="multiplier" position="3,8" direction="l" coefficient="b_K"/>
+        <multiplier position="3,1" direction="l" coefficient="b_0"/>
+        <multiplier position="3,3" direction="l" coefficient="b_1"/>
+        <multiplier position="3,5" direction="l" coefficient="b_2"/>
+        <multiplier position="3,6" direction="l" coefficient="b_{K-1}"/>
+        <multiplier position="3,8" direction="l" coefficient="b_K"/>
 
-        <node type="multiplier" position="5,3" direction="r" coefficient="-a_1"/>
-        <node type="multiplier" position="5,5" direction="r" coefficient="-a_2"/>
-        <node type="multiplier" position="5,6" direction="r" coefficient="-a_{K-1}"/>
-        <node type="multiplier" position="5,8" direction="r" coefficient="-a_K"/>
+        <multiplier position="5,3" direction="r" coefficient="-a_1"/>
+        <multiplier position="5,5" direction="r" coefficient="-a_2"/>
+        <multiplier position="5,6" direction="r" coefficient="-a_{K-1}"/>
+        <multiplier position="5,8" direction="r" coefficient="-a_K"/>
 
         <!-- __________Adders__________ -->
-        <node type="adder" position="4,1" arrows="lb"/>
-        <node type="adder" position="4,3" arrows="lrb"/>
-        <node type="adder" position="4,5" arrows="lrb"/>
-        <node type="adder" position="4,6" arrows="lrb"/>
-        <node type="adder" position="4,8" arrows="lr"/>
+        <adder position="4,1" arrows="lb"/>
+        <adder position="4,3" arrows="lrb"/>
+        <adder position="4,5" arrows="lrb"/>
+        <adder position="4,6" arrows="lrb"/>
+        <adder position="4,8" arrows="lr"/>
 
         <!-- __________Delays__________ -->
-        <node type="delay" position="2,2" arrows="t"/>
-        <node type="delay" position="2,4" arrows="t"/>
-        <node type="delay" position="2,7" arrows="t"/>
+        <delay position="2,2" arrows="t"/>
+        <delay position="2,4" arrows="t"/>
+        <delay position="2,7" arrows="t"/>
 
-        <node type="delay" position="6,2" arrows="t"/>
-        <node type="delay" position="6,4" arrows="t"/>
-        <node type="delay" position="6,7" arrows="t"/>
+        <delay position="6,2" arrows="t"/>
+        <delay position="6,4" arrows="t"/>
+        <delay position="6,7" arrows="t"/>
 
         <!-- __________ Arrows __________ -->
-        <node type="arrow" position="7,1"  arrows="l" text="y[n]"/>
-        <node type="arrow" position="1,1"  arrows=""  text="x[n]"/>
-        <node type="arrow" position="2,9"  arrows="t" text=""/>
-        <node type="arrow" position="6,9"  arrows="t" text=""/>
-        <node type="arrow" position="4,10" arrows="b" text=""/>
+        <arrow position="7,1"  arrows="l" text="y[n]"/>
+        <arrow position="1,1"  arrows=""  text="x[n]"/>
+        <arrow position="2,9"  arrows="t" text=""/>
+        <arrow position="6,9"  arrows="t" text=""/>
+        <arrow position="4,10" arrows="b" text=""/>
     </nodes>
 </figure>
