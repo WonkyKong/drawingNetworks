@@ -2,6 +2,7 @@
 
 import os
 import sys
+from contextlib import contextmanager
 from lxml import objectify
 from subprocess import call
 
@@ -362,7 +363,8 @@ def createTexFile (fileName, xmlStruct):
 
 
 def createWrapperTexFile (texFileName):
-    wrapperFileName = 'wrapper_' + texFileName
+    (path, filename) = os.path.split (texFileName)
+    wrapperFileName = os.path.join (path, 'wrapper_' + filename)
     texContents = """\
 \documentclass[fleqn,12pt]{article}
 \usepackage[rmargin=1in,lmargin=1in,tmargin=0.7in,bmargin=1in]{geometry}
@@ -387,7 +389,7 @@ def createWrapperTexFile (texFileName):
     \\begin{figure}[!ht]
         \centerline{
             \input{"""
-    texContents += texFileName
+    texContents += filename
     texContents += """}
         }
     \end{figure}
@@ -395,6 +397,13 @@ def createWrapperTexFile (texFileName):
 """
     with open (wrapperFileName, 'w') as wrapperFile:
         wrapperFile.write (texContents)
+
+@contextmanager
+def pushd (newDir):
+    previousDir = os.getcwd ()
+    os.chdir (newDir)
+    yield
+    os.chdir (previousDir)
 
 
 if __name__ == "__main__":
@@ -423,7 +432,11 @@ if __name__ == "__main__":
     createWrapperTexFile (texFileName)
 
     # Generate the pdf
-    wrapperStem = 'wrapper_{}'.format (fileNameStem)
-    call (['/Library/TeX/texbin/latex', wrapperStem + '.tex'])
-    call (['/Library/TeX/texbin/dvips', '-Ppdf', '-t', 'a$', wrapperStem, '-o'])
-    call (['ps2pdf', wrapperStem + '.ps', wrapperStem + '.pdf'])
+    (path, stem) = os.path.split (fileNameStem)
+    if not path:
+        path = "."
+    wrapperStem = 'wrapper_' + stem
+    with pushd (path):
+        call (['/Library/TeX/texbin/latex', wrapperStem + '.tex'])
+        call (['/Library/TeX/texbin/dvips', '-Ppdf', '-t', 'a$', wrapperStem, '-o'])
+        call (['ps2pdf', wrapperStem + '.ps', wrapperStem + '.pdf'])
