@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-from Node import Node
+from nodes import Node
 
 
-class subnode (Node):
+class subnode (Node.Node):
 
     def __init__ (self, nodeStruct, grid):
-        Node.__init__ (self, nodeStruct, grid)
+        super (subnode, self).__init__ (nodeStruct, grid)
         self.HEIGHT             = 0.6
         self.WIDTH              = 0.8
         self.SUPERCRIPT_NUDGE   = 0.08

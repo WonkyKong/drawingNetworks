@@ -8,7 +8,6 @@ from lxml import objectify
 from subprocess import call
 
 from AttributeFinder import AttributeFinder
-from Node import Node
 
 
 
@@ -100,7 +99,7 @@ def createTexFile (fileName, xmlStruct):
         if xmlNode.tag != "comment":
             type = getNodeType (xmlNode)
             if type not in nodeModules:
-                nodeModules[type] = imp.load_source (type, '{}.py'.format (type))
+                nodeModules[type] = imp.load_source (type, 'nodes/{}.py'.format (type))
 
     # Populate the nodes
     nodes = []

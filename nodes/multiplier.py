@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-from Node import Node
+from nodes import Node
 
 
-class subnode (Node):
+class subnode (Node.Node):
 
     def __init__ (self, nodeStruct, grid):
         super (self.__class__, self).__init__ (nodeStruct, grid)
