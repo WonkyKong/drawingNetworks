@@ -17,9 +17,9 @@ class CurrentDirectForm1Generation (unittest.TestCase):
         # Go to the directory containing generateAndCheckNetwork.py ...
         with pushd (os.path.dirname (os.path.dirname (os.path.realpath (__file__)))):
             # ... and run generateAndCheckNetwork.py on the DirectForm1 XML file
-            call (['./generateAndCheckNetwork.py', 'DirectForm1.XML'])
+            call (['./generateAndCheckNetwork.py', 'exampleXML/DirectForm1.XML'])
             # Check this matches the original version of the generated tex file
-            self.assertTrue (open ('DirectForm1.tex', 'rb').read() == open('tests/DirectForm1.tex', 'rb').read())
+            self.assertTrue (open ('exampleXML/DirectForm1.tex', 'rb').read() == open('tests/DirectForm1.tex', 'rb').read())
 
 if __name__ == "__main__":
     unittest.main ()
