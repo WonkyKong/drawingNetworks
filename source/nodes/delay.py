@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from nodes import Node
+from source.nodes import Node
 
 
 class subnode (Node.Node):

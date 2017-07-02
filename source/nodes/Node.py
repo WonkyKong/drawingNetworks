@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from AttributeFinder import AttributeFinder
+from source.AttributeFinder import AttributeFinder
 
 
 class Node (object, AttributeFinder):
