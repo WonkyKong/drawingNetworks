@@ -32,115 +32,6 @@ class Grid (AttributeFinder):
                 float (self.y[int (indices[1]) - 1])]
 
 
-class Arrow (Node):
-
-    def __init__ (self, nodeStruct, grid):
-        Node.__init__ (self, nodeStruct, grid)
-        self.TEXT_DISTANCE  = 0.3
-        self.arrows         = self.getAttribute ('arrows',  '{}')
-
-        self.text           = self.getAttribute ('text',    '{}')
-        if (self.text == None):
-            self.text = ''
-
-        self.text_justification = self.getAttribute ('text_justification', '[{}]')
-        if (self.text_justification == None):
-            self.text_justification = ''
-
-    def getTexString (self):
-        texString = ''
-
-        # Draw the arrows
-        texString += super (Arrow, self).addArrows ([0, 0, 0, 0], self.arrows)
-
-        # Add the text
-        if self.text:
-            texString += '\\rput{}({},{}){{\\fontsize{{8}}{{8}}\\selectfont ${}$}}\n'.format (
-                self.text_justification,
-                self.position[0],
-                self.position[1] + self.TEXT_DISTANCE,
-                self.text
-            )
-
-        return texString
-
-class Delay (Node):
-
-    def __init__ (self, nodeStruct, grid):
-        Node.__init__ (self, nodeStruct, grid)
-        self.HEIGHT             = 0.6
-        self.WIDTH              = 0.8
-        self.SUPERCRIPT_NUDGE   = 0.08
-        self.arrows             = self.getAttribute ('arrows', '{}')
-
-    def getTexString (self):
-        texString = ''
-
-        # Draw the arrows
-        shapeLimits = [x * 0.5 for x in [-self.WIDTH, -self.HEIGHT, self.WIDTH, self.HEIGHT]]
-        texString += super (Delay, self).addArrows (shapeLimits, self.arrows)
-
-        # Draw the box
-        texString += '\\psframe[{}]({},{})({},{})\n'.format (
-            'fillstyle=solid,fillcolor=white',
-            self.position[0] - self.WIDTH  * 0.5,
-            self.position[1] - self.HEIGHT * 0.5,
-            self.position[0] + self.WIDTH  * 0.5,
-            self.position[1] + self.HEIGHT * 0.5,
-        )
-
-        # Add the text inside the box
-        texString += '\\rput({},{}){{\\fontsize{{8}}{{8}}\\selectfont$z\\ \\,\\,$}}'.format (
-            self.position[0],
-            self.position[1]
-        )
-        texString += '\\rput({},{}){{\\ \\ \\fontsize{{6}}{{6}}\\selectfont-1}}'.format (
-            self.position[0],
-            self.position[1] + self.SUPERCRIPT_NUDGE
-        )
-
-        return texString
-
-
-class Adder (Node):
-
-    def __init__ (self, nodeStruct, grid):
-        Node.__init__ (self, nodeStruct, grid)
-        self.ARM_LENGTH = 0.09
-        self.RADIUS     = 0.2
-        self.arrows     = self.getAttribute ('arrows', '{}')
-
-    def getTexString (self):
-        texString = ''
-
-        # Draw the arrows
-        texString += super (Adder, self).addArrows ([self.RADIUS * x for x in [-1, -1, 1, 1]], self.arrows)
-
-        # Draw the circle
-        texString += '\\pscircle[{}]({},{}){{{}}}\n'.format (
-            'fillstyle=solid,fillcolor=white',
-            self.position[0],
-            self.position[1],
-            self.RADIUS
-        )
-
-        # Draw the cross
-        texString += '\\psline({},{})({},{})\n'.format (
-            self.position[0]-self.ARM_LENGTH,
-            self.position[1],
-            self.position[0]+self.ARM_LENGTH,
-            self.position[1]
-        )
-        texString += '\\psline({},{})({},{})\n'.format (
-            self.position[0],
-            self.position[1]-self.ARM_LENGTH,
-            self.position[0],
-            self.position[1]+self.ARM_LENGTH
-        )
-
-        return texString
-
-
 def getNodeType (nodeStruct):
 
     type = nodeStruct.tag
@@ -156,13 +47,7 @@ def getNodeType (nodeStruct):
 def NodeFactory (nodeStruct, grid, nodeModules):
 
     type = getNodeType (nodeStruct)
-
-    if type == 'multiplier':
-        return nodeModules[type].subnode (nodeStruct, grid)
-    if type == 'adder':         return Adder        (nodeStruct, grid)
-    if type == 'delay':         return Delay        (nodeStruct, grid)
-    if type == 'arrow':         return Arrow        (nodeStruct, grid)
-    return Node (nodeStruct, grid)
+    return nodeModules[type].subnode (nodeStruct, grid)
 
 
 class Line (AttributeFinder):
@@ -215,8 +100,7 @@ def createTexFile (fileName, xmlStruct):
         if xmlNode.tag != "comment":
             type = getNodeType (xmlNode)
             if type not in nodeModules:
-                if type == 'multiplier':
-                    nodeModules[type] = imp.load_source (type, '{}.py'.format (type))
+                nodeModules[type] = imp.load_source (type, '{}.py'.format (type))
 
     # Populate the nodes
     nodes = []
