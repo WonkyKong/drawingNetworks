@@ -43,12 +43,6 @@ def getNodeType (nodeStruct):
     return type
 
 
-def NodeFactory (nodeStruct, grid, nodeModules):
-
-    type = getNodeType (nodeStruct)
-    return nodeModules[type].subnode (nodeStruct, grid)
-
-
 class Line (AttributeFinder):
 
     def __init__ (self, lineStruct, grid):
@@ -105,7 +99,9 @@ def createTexFile (fileName, xmlStruct):
     nodes = []
     for xmlNode in xmlStruct.nodes.getchildren ():
         if xmlNode.tag != "comment":
-            nodes.append (NodeFactory (xmlNode, grid, nodeModules))
+            type = getNodeType (xmlNode)
+            newNode = nodeModules[type].subnode (xmlNode, grid)
+            nodes.append (newNode)
 
     # Write to the tex file
     with open (fileName, 'w') as texFile:
