@@ -5,7 +5,7 @@ import os
 import sys
 from contextlib import contextmanager
 from lxml import objectify
-from subprocess import call
+import subprocess
 
 from source.AttributeFinder import AttributeFinder
 
@@ -193,6 +193,8 @@ if __name__ == "__main__":
         path = "."
     wrapperStem = 'wrapper_' + stem
     with pushd (path):
-        call (['/Library/TeX/texbin/latex', wrapperStem + '.tex'])
-        call (['/Library/TeX/texbin/dvips', '-Ppdf', '-t', 'a$', wrapperStem, '-o'])
-        call (['ps2pdf', wrapperStem + '.ps', wrapperStem + '.pdf'])
+        FNULL = open(os.devnull, 'w')
+        subprocess.call (['/Library/TeX/texbin/latex', wrapperStem + '.tex'], stdout=FNULL)
+        subprocess.call (['/Library/TeX/texbin/dvips', '-Ppdf', '-t', 'a$', wrapperStem, '-o'], stdout=FNULL, stderr=FNULL)
+        subprocess.call (['ps2pdf', wrapperStem + '.ps', wrapperStem + '.pdf'], stdout=FNULL)
+        FNULL.close ()
