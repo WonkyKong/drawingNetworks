@@ -70,9 +70,6 @@ class Line (AttributeFinder):
 
 def createTexFile (fileName, xmlStruct):
 
-    # This is based on the npspic class in the original Matlab code
-
-
     # Construct the grid
     grid = Grid (xmlStruct.grid)
 
@@ -93,7 +90,10 @@ def createTexFile (fileName, xmlStruct):
         if xmlNode.tag != "comment":
             type = getNodeType (xmlNode)
             if type not in nodeModules:
-                nodeModules[type] = imp.load_source (type, 'source/nodes/{}.py'.format (type))
+                try:
+                    nodeModules[type] = imp.load_source (type, 'source/nodes/{}.py'.format (type))
+                except:
+                    print "source/nodes/{}.py not found".format (type)
 
     # Populate the nodes
     nodes = []
