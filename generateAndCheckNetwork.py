@@ -141,7 +141,7 @@ class Adder (Node):
         return texString
 
 
-def NodeFactory (nodeStruct, grid, nodeModules):
+def getNodeType (nodeStruct):
 
     type = nodeStruct.tag
     if type == "node":
@@ -150,6 +150,12 @@ def NodeFactory (nodeStruct, grid, nodeModules):
         if type is None:
             # Get the type from a sub-node
             type = str (nodeStruct.type).strip ()
+    return type
+
+
+def NodeFactory (nodeStruct, grid, nodeModules):
+
+    type = getNodeType (nodeStruct)
 
     if type == 'multiplier':
         return nodeModules[type].subnode (nodeStruct, grid)
@@ -207,15 +213,7 @@ def createTexFile (fileName, xmlStruct):
     nodeModules = {}
     for xmlNode in xmlStruct.nodes.getchildren ():
         if xmlNode.tag != "comment":
-
-            type = xmlNode.tag
-            if type == "node":
-                # Try getting the type from an attribute
-                type = nodeStruct.get ("type")
-                if type is None:
-                    # Get the type from a sub-node
-                    type = str (nodeStruct.type).strip ()
-
+            type = getNodeType (xmlNode)
             if type not in nodeModules:
                 if type == 'multiplier':
                     nodeModules[type] = imp.load_source (type, '{}.py'.format (type))
