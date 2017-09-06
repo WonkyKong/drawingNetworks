@@ -15,21 +15,26 @@
     </grid>
     <lines>
         <!-- __________ Horizontal lines __________ -->
-        <line start="1,1" stop="7,1" />
-        <line start="2,3" stop="6,3" />
-        <line start="2,5" stop="6,5" />
-        <line start="2,6" stop="6,6" />
-        <line start="2,8" stop="6,8" />
+        <line start="1,1" stop="7,1" /> <!-- With input, output and b0 multiplier -->
+        <line start="2,3" stop="6,3" /> <!-- With b1 and -a1 multipliers -->
+        <line start="2,5" stop="6,5" /> <!-- With b2 and -a2 multipliers -->
+        <line start="2,6" stop="6,6" /> <!-- With b(K-1) and -a(K-1) multipliers -->
+        <line start="2,8" stop="6,8" /> <!-- With bK and -aK multiplers -->
 
         <!-- __________ Vertical lines __________ -->
+        <!-- Left, middle and right lines in top half of diagram
+            (above dashed lines) -->
         <line start="2,1" stop="2,9" />
         <line start="4,1" stop="4,9" />
         <line start="6,1" stop="6,9" />
 
+        <!-- Left, middle and right dashed lines -->
         <line start="2,9" stop="2,10" line_style="linestyle=dashed,dash=3pt 4pt"/>
         <line start="4,9" stop="4,10" line_style="linestyle=dashed,dash=3pt 4pt"/>
         <line start="6,9" stop="6,10" line_style="linestyle=dashed,dash=3pt 4pt"/>
 
+        <!-- Left, middle and right lines at bottom of diagram
+            (below dashed lines) -->
         <line start="2,10" stop="2,8" />
         <line start="4,10" stop="4,8" />
         <line start="6,10" stop="6,8" />
@@ -48,6 +53,7 @@
         <multiplier position="5,8" direction="r" coefficient="-a_K"/>
 
         <!-- __________Adders__________ -->
+        <!-- From top to bottom -->
         <adder position="4,1" arrows="lb"/>
         <adder position="4,3" arrows="lrb"/>
         <adder position="4,5" arrows="lrb"/>
@@ -55,10 +61,12 @@
         <adder position="4,8" arrows="lr"/>
 
         <!-- __________Delays__________ -->
+        <!-- Delays on left, from top to bottom -->
         <delay position="2,2" arrows="t"/>
         <delay position="2,4" arrows="t"/>
         <delay position="2,7" arrows="t"/>
 
+        <!-- Delays on right, from top to bottom -->
         <delay position="6,2" arrows="t"/>
         <delay position="6,4" arrows="t"/>
         <delay position="6,7" arrows="t"/>
