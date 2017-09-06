@@ -22,7 +22,8 @@ class subnode (Node.Node):
         texString = ''
 
         # Draw the arrows
-        texString += super (subnode, self).addArrows ([0, 0, 0, 0], self.arrows)
+        # TODO: option to change between 0 and 0.02?
+        texString += super (subnode, self).addArrows ([-0.02, -0.02, 0.02, 0.02], self.arrows)
 
         # Add the text
         if self.text:

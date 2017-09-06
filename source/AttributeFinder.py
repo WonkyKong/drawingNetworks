@@ -17,7 +17,7 @@ class AttributeFinder:
         else:
             return func (attributeString)
 
-    def getAttribute (self, attributeName, func):
+    def getAttribute (self, attributeName, func, default=None):
         attributeString = self.xmlStruct.get (attributeName)
         if attributeString is not None:
             return AttributeFinder.__applyFunc (attributeString, func)
@@ -27,7 +27,7 @@ class AttributeFinder:
                 attributeString = find (self.xmlStruct).text.strip ()
                 return AttributeFinder.__applyFunc (attributeString, func)
             except:
-                return None
+                return default
 
     def isPresent (self, attributeName, trueValue, falseValue):
         find = objectify.ObjectPath ('{}.{}'.format (self.xmlTag, attributeName))
