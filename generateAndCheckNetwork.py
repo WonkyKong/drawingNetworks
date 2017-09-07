@@ -49,9 +49,8 @@ class Grid (AttributeFinder):
             i = i + 1
 
     def to_xy (self, indicesStr):
-        indices = str (indicesStr).split (',')
-        return '{},{}'.format (self.x[int (indices[0]) - 1].strip (),
-                               self.y[int (indices[1]) - 1].strip ())
+        xy = self.to_xy_array (indicesStr)
+        return '{},{}'.format (xy[0], xy[1])
 
     def to_xy_array (self, indicesStr):
         xy = str (indicesStr).split (',')
