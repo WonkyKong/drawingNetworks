@@ -2,6 +2,7 @@
 
 import imp
 import os
+import re
 import sys
 from contextlib import contextmanager
 from lxml import objectify
@@ -13,12 +14,38 @@ from source.AttributeFinder import AttributeFinder
 
 class Grid (AttributeFinder):
 
-    def __init__ (self, gridStruct):
+    def __init__ (self, gridStruct, constantsDict):
         AttributeFinder.__init__ (self, gridStruct, 'grid')
+
         def splitValues (s):
-            return s.split (',')
+            return  [element.strip () for element in s.split (',')]
+
+        def isNumber (s):
+            try:
+                float (s)
+                return True
+            except ValueError:
+                return False
+
         self.x = self.getAttribute ('x', splitValues)
+        i = 0
+        for x in self.x:
+            if not isNumber (x):
+                try:
+                    self.x[i] = '{}'.format (constantsDict[x])
+                except:
+                    print "Unknown constant"
+            i = i + 1
+
         self.y = self.getAttribute ('y', splitValues)
+        i = 0
+        for y in self.y:
+            if not isNumber (y):
+                try:
+                    self.y[i] = '{}'.format (constantsDict[y])
+                except:
+                    print "Unknown constant"
+            i = i + 1
 
     def to_xy (self, indicesStr):
         indices = str (indicesStr).split (',')
@@ -67,11 +94,34 @@ class Line (AttributeFinder):
         )
 
 
+class Constant (AttributeFinder):
+    def __init__ (self, xmlConstant, constantsDict):
+        AttributeFinder.__init__ (self, xmlConstant, 'constant')
+
+        # Get the expression string
+        expression = self.getAttribute ('expression', '{}')
+        if expression != None:
+
+            # Make a set of the words
+            wordSet = filter (lambda x:re.match("^[a-zA-Z]+$",x),[x for x in set(re.split("[\s:/,.:]",expression))])
+
+            # Replace each word in the expression string with a reference into the constants dictionary
+            for word in wordSet:
+                expression = re.sub (r'\b' + re.escape (word) + r'\b', 'constantsDict["{}"]'.format (word), expression)
+
+            # Evaluate the expression string
+            exec (expression) in locals ()
+
 
 def createTexFile (fileName, xmlStruct):
 
+    # Get any constants
+    constantsDict = {}
+    for xmlConstant in xmlStruct.constants.constant:
+        Constant (xmlConstant, constantsDict)
+
     # Construct the grid
-    grid = Grid (xmlStruct.grid)
+    grid = Grid (xmlStruct.grid, constantsDict)
 
     # Determine the scaling
     try:
