@@ -124,18 +124,22 @@ class Constant (AttributeFinder):
         AttributeFinder.__init__ (self, xmlConstant, 'constant')
 
         # Get the expression string
-        expression = self.getAttribute ('expression', '{}')
-        if expression != None:
+        expressions = self.getAttribute ('expression', '{}')
+        if expressions != None:
+            expressionList = expressions.split (';')
+            for expression in expressionList:
+                expression = expression.strip ()
+                if len (expression) > 0:
 
-            # Make a set of the words
-            wordSet = filter (lambda x:re.match("^[a-zA-Z]+$",x),[x for x in set(re.split("[\s:/,.:()]",expression))])
+                    # Make a set of the words
+                    wordSet = filter (lambda x:re.match("^[a-zA-Z]+$",x),[x for x in set(re.split("[\s:/,.:()]",expression))])
 
-            # Replace each word in the expression string with a reference into the constants dictionary
-            for word in wordSet:
-                expression = re.sub (r'\b' + re.escape (word) + r'\b', 'constantsDict["{}"]'.format (word), expression)
+                    # Replace each word in the expression string with a reference into the constants dictionary
+                    for word in wordSet:
+                        expression = re.sub (r'\b' + re.escape (word) + r'\b', 'constantsDict["{}"]'.format (word), expression)
 
-            # Evaluate the expression string
-            exec (expression) in locals ()
+                    # Evaluate the expression string
+                    exec (expression) in locals ()
 
 
 def createTexFile (fileName, xmlStruct):
