@@ -156,7 +156,7 @@ def createTexFile (fileName, xmlStruct):
         if xmlNode.tag != "comment":
             type = getNodeType (xmlNode)
             try:
-                newNode = nodeModules[type].fromXml (xmlNode, grid)
+                newNode = nodeModules[type].subnode.fromXml (xmlNode, grid)
             except:
                 newNode = nodeModules[type].subnode (xmlNode, grid)
             nodes.append (newNode)
