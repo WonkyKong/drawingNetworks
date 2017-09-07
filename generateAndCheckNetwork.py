@@ -136,8 +136,11 @@ def createTexFile (fileName, xmlStruct):
 
     # Populate the lines
     lines = []
-    for xmlLine in xmlStruct.lines.line:
-        lines.append (Line.fromXml (xmlLine, grid))
+    try:
+        for xmlLine in xmlStruct.lines.line:
+            lines.append (Line.fromXml (xmlLine, grid))
+    except:
+        pass
 
     # Load the node modules
     nodeModules = {}

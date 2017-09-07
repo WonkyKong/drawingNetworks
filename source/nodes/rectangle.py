@@ -1,23 +1,21 @@
 #!/usr/bin/env python
 
 from source.nodes import Node
-
+from source.AttributeFinder import AttributeFinder
 
 class subnode (Node.Node):
 
-    def __init__ (self, nodeStruct, grid):
+    def __init__ (self, nodeStruct, grid, height, width, alignment, frameFormat, opaque, text, textAlignment):
         super (subnode, self).__init__ (nodeStruct, grid)
 
         LINEWIDTH = 0.015
 
-        self.height = float (self.getAttribute ('height', '{}', 0.6))
+        self.height = height
         halfHeight = self.height * 0.5
 
-        self.width = float (self.getAttribute ('width',  '{}', 0.8))
+        self.width = width
         halfWidth = self.width * 0.5
 
-
-        alignment = self.getAttribute ('alignment', '{}', 'middle')
         if 'right' in alignment:
             self.leftEdge = self.position[0] - self.width
         elif 'left' in alignment:
@@ -32,14 +30,11 @@ class subnode (Node.Node):
         else:
             self.bottomEdge = self.position[1] - halfHeight
 
-
-        self.frameFormat = self.getAttribute ('format', '{}', 'fillstyle=solid,fillcolor=white')
-        self.opaque = (self.getAttribute ('opaque', '{}', 'true') == 'true')
-
+        self.frameFormat = frameFormat
+        self.opaque = opaque
 
         # The text and its alignment
-        self.text = self.getAttribute ('text', '{}', '')
-        textAlignment = self.getAttribute ('textAlignment', '{}', 'middle')
+        self.text = text
         self.textX = self.leftEdge + halfWidth
         self.textY = self.bottomEdge + halfHeight
         if 'middle' == textAlignment:
@@ -64,6 +59,18 @@ class subnode (Node.Node):
                 self.textY -= nudgedHalfHeight
 
             self.rputAlignment = '[{}]'.format (rputAlignment)
+
+    @classmethod
+    def fromXml (cls, nodeStruct, grid):
+        af = AttributeFinder (nodeStruct, 'node')
+        height = float (af.getAttribute ('height', '{}', 0.6))
+        width = float (af.getAttribute ('width',  '{}', 0.8))
+        alignment = af.getAttribute ('alignment', '{}', 'middle')
+        frameFormat = af.getAttribute ('format', '{}', 'fillstyle=solid,fillcolor=white')
+        opaque = (af.getAttribute ('opaque', '{}', 'true') == 'true')
+        text = af.getAttribute ('text', '{}', '')
+        textAlignment = af.getAttribute ('textAlignment', '{}', 'middle')
+        return cls (nodeStruct, grid, height, width, alignment, frameFormat, opaque, text, textAlignment)
 
     def getTexString (self):
         texString = ''
