@@ -4,18 +4,27 @@ from source.AttributeFinder import AttributeFinder
 
 class Line (AttributeFinder):
 
-    def __init__ (self, lineStruct, grid):
-        AttributeFinder.__init__ (self, lineStruct, 'line')
-        self.startPosition  = self.getAttribute ('start',        grid.to_xy)
-        self.endPosition    = self.getAttribute ('stop',         grid.to_xy)
+    def __init__ (self, startPosition, endPosition, lineStyle, lineEnds):
+        self.startPosition  = startPosition
+        self.endPosition    = endPosition
+        self.lineStyle      = lineStyle
+        self.lineEnds       = lineEnds
 
-        self.lineStyle      = self.getAttribute ('line_style',   '[{}]')
-        if self.lineStyle == None:
-            self.lineStyle  = self.getAttribute ('line_width',   '[linewidth={}]')
-        if self.lineStyle == None:
-            self.lineStyle = ''
 
-        self.lineEnds       = self.isPresent ('square_ends', '', '{c-c}')
+    @classmethod
+    def fromXml (cls, lineStruct, grid):
+        af = AttributeFinder (lineStruct, 'line')
+        startPosition   = af.getAttribute ('start',         grid.to_xy)
+        endPosition     = af.getAttribute ('stop',          grid.to_xy)
+
+        lineStyle       = af.getAttribute ('line_style',    '[{}]')
+        if lineStyle == None:
+            lineStyle   = af.getAttribute ('line_width',   '[linewidth={}]')
+        if lineStyle == None:
+            lineStyle = ''
+
+        lineEnds       = af.isPresent ('square_ends', '', '{c-c}')
+        return cls (startPosition, endPosition, lineStyle, lineEnds)
 
     def getTexString (self):
         return '\\psline{}{}({})({})\n'.format (

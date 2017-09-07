@@ -137,7 +137,7 @@ def createTexFile (fileName, xmlStruct):
     # Populate the lines
     lines = []
     for xmlLine in xmlStruct.lines.line:
-        lines.append (Line (xmlLine, grid))
+        lines.append (Line.fromXml (xmlLine, grid))
 
     # Load the node modules
     nodeModules = {}
@@ -155,7 +155,10 @@ def createTexFile (fileName, xmlStruct):
     for xmlNode in xmlStruct.nodes.getchildren ():
         if xmlNode.tag != "comment":
             type = getNodeType (xmlNode)
-            newNode = nodeModules[type].subnode (xmlNode, grid)
+            try:
+                newNode = nodeModules[type].fromXml (xmlNode, grid)
+            except:
+                newNode = nodeModules[type].subnode (xmlNode, grid)
             nodes.append (newNode)
 
     # Write to the tex file
