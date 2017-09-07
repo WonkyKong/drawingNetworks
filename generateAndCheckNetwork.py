@@ -16,6 +16,7 @@ class Grid (AttributeFinder):
 
     def __init__ (self, gridStruct, constantsDict):
         AttributeFinder.__init__ (self, gridStruct, 'grid')
+        self.constantsDict = constantsDict
 
         def splitValues (s):
             return  [element.strip () for element in s.split (',')]
@@ -53,9 +54,33 @@ class Grid (AttributeFinder):
                                self.y[int (indices[1]) - 1].strip ())
 
     def to_xy_array (self, indicesStr):
-        indices = str (indicesStr).split (',')
-        return [float (self.x[int (indices[0]) - 1]),
-                float (self.y[int (indices[1]) - 1])]
+        xy = str (indicesStr).split (',')
+
+        def getCoordinate (s, list):
+            try:
+                # s is an index into the list of coordinates
+                index = int (s) - 1
+                return float (list[index])
+            except:
+                if s in self.constantsDict:
+                    return float (self.constantsDict[s])
+                else:
+                    expression = s
+
+                    # Make a set of the words
+                    wordSet = filter (lambda x:re.match("^[a-zA-Z]+$",x),[x for x in set(re.split("[\s:/,.:()]",expression))])
+
+                    # Replace each word in the expression string with a reference into the constants dictionary
+                    constantsDict = self.constantsDict
+                    for word in wordSet:
+                        expression = re.sub (r'\b' + re.escape (word) + r'\b', 'constantsDict["{}"]'.format (word), expression)
+
+                    # Evaluate the expression string
+                    exec ('returnValue = {}'.format (expression)) in locals ()
+                    return returnValue
+
+        return [getCoordinate (xy[0], self.x),
+                getCoordinate (xy[1], self.y)]
 
 
 def getNodeType (nodeStruct):
@@ -103,7 +128,7 @@ class Constant (AttributeFinder):
         if expression != None:
 
             # Make a set of the words
-            wordSet = filter (lambda x:re.match("^[a-zA-Z]+$",x),[x for x in set(re.split("[\s:/,.:]",expression))])
+            wordSet = filter (lambda x:re.match("^[a-zA-Z]+$",x),[x for x in set(re.split("[\s:/,.:()]",expression))])
 
             # Replace each word in the expression string with a reference into the constants dictionary
             for word in wordSet:
@@ -119,6 +144,7 @@ def createTexFile (fileName, xmlStruct):
     constantsDict = {}
     for xmlConstant in xmlStruct.constants.constant:
         Constant (xmlConstant, constantsDict)
+    # print constantsDict
 
     # Construct the grid
     grid = Grid (xmlStruct.grid, constantsDict)
