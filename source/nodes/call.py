@@ -16,19 +16,23 @@ class subnode (AttributeFinder):
         stop    = self.getAttribute ('stop', '{}')
 
         startPos        = grid.to_xy_array ('{},{}'.format (start, y))
-        startPosString  = '{},{}'.format (startPos[0], startPos[1])
-
         stopPos         = grid.to_xy_array ('{},{}'.format (stop, y))
-        stopPosString   = '{},{}'.format (stopPos[0], stopPos[1])
-
-        self.line = Line (startPosString, stopPosString, '', '')
 
         startX = startPos[0]
         stopX = stopPos[0]
+        halfLineWidth = 0.02
         if startX < stopX:
             direction = 'l'
+            stopX -= halfLineWidth
         else:
             direction = 'r'
+            stopX += halfLineWidth
+
+        startPosString  = '{},{}'.format (startX,   startPos[1])
+        stopPosString   = '{},{}'.format (stopX,    stopPos[1])
+
+        self.line = Line (startPosString, stopPosString, '', '')
+
         nodeStruct.set ('position', stopPosString)
         self.arrow = arrow.subnode (nodeStruct, grid, direction, '', '')
 
